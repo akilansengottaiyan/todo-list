@@ -1,6 +1,4 @@
 import { useState, useEffect } from 'react'
-import reactLogo from './assets/react.svg'
-import viteLogo from '/vite.svg'
 import './App.css'
 
 function App() {
@@ -24,13 +22,19 @@ function App() {
   }, [task])
 
   const addTodo = () => {
-    setTodos([...todos, task])
+    setTodos([...todos, { text: task, completed: false }])
     setTask("")
   }
 
   const removeTodo = (id) => {
     setTodos(prev => prev.filter((_, i) => i !== id))
     console.log("Hello World " + id)
+  }
+
+  const toggleComplete = (id) => {
+    setTodos(prev => prev.map((todo, i) => 
+      i === id ? { ...todo, completed: !todo.completed } : todo
+    ))
   }
 
   return (
@@ -48,7 +52,15 @@ function App() {
           <ul className="list">
             { todos.map((t, i) => (
               <li key={i} className="todo-item">
-                <span>{t}</span>
+                <div className="todo-content">
+                  <input 
+                    type="checkbox" 
+                    checked={t.completed || false}
+                    onChange={() => toggleComplete(i)}
+                    className="todo-checkbox"
+                  />
+                  <span className={t.completed ? "completed" : ""}>{t.text || t}</span>
+                </div>
                 <button className="btn btn-danger" onClick={() => removeTodo(i)}>🗑️ Delete</button>
               </li>
             )) }
