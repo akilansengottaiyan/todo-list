@@ -22,7 +22,12 @@ function App() {
   }, [task])
 
   const addTodo = () => {
-    setTodos([...todos, { text: task, completed: false }])
+    setTodos([...todos, { 
+      text: task, 
+      completed: false,
+      createdAt: new Date().toISOString(),
+      completedAt: null
+    }])
     setTask("")
   }
 
@@ -33,7 +38,11 @@ function App() {
 
   const toggleComplete = (id) => {
     setTodos(prev => prev.map((todo, i) => 
-      i === id ? { ...todo, completed: !todo.completed } : todo
+      i === id ? { 
+        ...todo, 
+        completed: !todo.completed,
+        completedAt: !todo.completed ? new Date().toISOString() : null
+      } : todo
     ))
   }
 
@@ -50,18 +59,25 @@ function App() {
             <button className="btn add-todo btn-outline-secondary" type="button" id="button-addon2" onClick={addTodo}>Add Todo</button>
           </div>
           <ul className="list">
-            { todos.map((t, i) => (
-              <li key={i} className="todo-item">
+            { todos
+              .map((todo, index) => ({ ...todo, originalIndex: index }))
+              .sort((a, b) => {
+                const dateA = a.createdAt ? new Date(a.createdAt) : new Date(0)
+                const dateB = b.createdAt ? new Date(b.createdAt) : new Date(0)
+                return dateA - dateB
+              })
+              .map((t) => (
+              <li key={t.originalIndex} className="todo-item">
                 <div className="todo-content">
                   <input 
                     type="checkbox" 
                     checked={t.completed || false}
-                    onChange={() => toggleComplete(i)}
+                    onChange={() => toggleComplete(t.originalIndex)}
                     className="todo-checkbox"
                   />
                   <span className={t.completed ? "completed" : ""}>{t.text || t}</span>
                 </div>
-                <button className="btn btn-danger" onClick={() => removeTodo(i)}>🗑️ Delete</button>
+                <button className="btn btn-danger" onClick={() => removeTodo(t.originalIndex)}>🗑️ Delete</button>
               </li>
             )) }
           </ul>
