@@ -1,33 +1,32 @@
-# 📝 React Todo App
+# 📊 AI Metrics Dashboard
 
-A simple, clean Todo List built with **React + Vite**.  
-I made this project to practice working with React state, localStorage, and UI layout.
+A comprehensive metrics dashboard for monitoring AI tool performance across your organization, built with **React + Vite**.
 
 ---
 
 ## 🚀 Features
 
-- Add new todos  
-- Delete tasks  
-- Todos stay saved using **localStorage**  
-- Lightweight and fast  
-- Minimal UI with button hover animations  
-- Responsive card layout  
+- **Flexible Date Range Selection**: Custom date picker with presets (Last 7 Days, Last Month, Last Quarter, Last Year) and custom date ranges
+- **Overview Dashboard**: Aggregated KPIs showing total requests, success rates, response times, and costs across all AI tools
+- **Tool-Specific Drill-down**: Detailed trend charts and historical data for individual AI tools
+- **Real-time Updates**: Dashboard automatically updates when date range changes
+- **Modern UI**: Clean, responsive interface with color-coded status indicators
+- **Performance Tracking**: Monitor usage, success rates, response times, and costs
+- **Last-Updated Timestamp**: Always know when data was last refreshed
 
 ---
 
 ## 🛠️ Tech Stack
 
-- **React** (Hooks)
+- **React** (Hooks + Context API)
 - **Vite**
-- **localStorage API**
-- **CSS**
+- **Recharts** (Data visualization)
+- **React DatePicker** (Date range selection)
+- **date-fns** (Date manipulation)
 
 ---
 
 ## 📦 Installation
-
-Clone the repo
 
 Install dependencies:
 
@@ -35,11 +34,49 @@ Install dependencies:
 npm install
 ```
 
-Run the project:
+Run the development server:
 
 ```bash
 npm run dev
 ```
+
+Build for production:
+
+```bash
+npm run build
+```
+
+---
+
+## 📋 Features Implemented (EA-249)
+
+### Date Range Filter
+- ✅ Preset date ranges (Last 7 Days, Last Month, Last Quarter, Last Year)
+- ✅ Custom start and end date selection
+- ✅ Date range validation and boundary handling
+- ✅ Persistent selection across dashboard views
+
+### Dashboard Overview
+- ✅ Aggregated KPIs across all AI tools
+- ✅ Individual tool performance cards
+- ✅ Color-coded status indicators
+- ✅ Click-through to tool drill-down views
+
+### Tool Drill-down
+- ✅ Detailed trend charts (Usage, Success Rate, Response Time, Cost)
+- ✅ Summary KPI cards for selected tool
+- ✅ Historical data visualization
+- ✅ Back navigation to overview
+
+### State Management
+- ✅ React Context for date range state
+- ✅ Automatic data refresh on date range change
+- ✅ Last-updated timestamp tracking
+
+### Mock API
+- ✅ Simulated metrics data generation
+- ✅ Time-based aggregations
+- ✅ Multiple AI tools support (ChatGPT, GitHub Copilot, Cursor, Claude, Midjourney)
 
 ---
 
