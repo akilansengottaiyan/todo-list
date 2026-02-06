@@ -1,6 +1,6 @@
 import './KPICard.css';
 
-const KPICard = ({ title, value, subtitle, change, trend, icon, loading = false }) => {
+const KPICard = ({ title, value, subtitle, change, icon, loading = false }) => {
   if (loading) {
     return (
       <div className="kpi-card loading">

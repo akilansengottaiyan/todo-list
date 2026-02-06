@@ -28,37 +28,58 @@ const DateRangeFilter = ({
   initialPreset = DATE_PRESETS.LAST_30_DAYS,
 }) => {
   const [isOpen, setIsOpen] = useState(false);
-  const [selectedPreset, setSelectedPreset] = useState(initialPreset);
-  const [customStartDate, setCustomStartDate] = useState(null);
-  const [customEndDate, setCustomEndDate] = useState(null);
-  const [granularity, setGranularity] = useState(() => getDefaultGranularity(dataSource));
-  const [comparisonType, setComparisonType] = useState(COMPARISON_TYPE.NONE);
-  const [validationError, setValidationError] = useState(null);
-  const dropdownRef = useRef(null);
-
-  // Load saved preferences from localStorage
-  useEffect(() => {
+  const [selectedPreset, setSelectedPreset] = useState(() => {
     const saved = localStorage.getItem('dateRangeFilter');
     if (saved) {
       try {
         const parsed = JSON.parse(saved);
-        if (parsed.preset) setSelectedPreset(parsed.preset);
-        if (parsed.granularity && isGranularitySupported(dataSource, parsed.granularity)) {
-          setGranularity(parsed.granularity);
-        }
-        if (parsed.comparisonType) setComparisonType(parsed.comparisonType);
-      } catch (e) {
-        console.error('Failed to load saved preferences', e);
+        return parsed.preset || initialPreset;
+      } catch {
+        return initialPreset;
       }
     }
-  }, []);
+    return initialPreset;
+  });
+  const [customStartDate, setCustomStartDate] = useState(null);
+  const [customEndDate, setCustomEndDate] = useState(null);
+  const [granularity, setGranularity] = useState(() => {
+    const saved = localStorage.getItem('dateRangeFilter');
+    if (saved) {
+      try {
+        const parsed = JSON.parse(saved);
+        if (parsed.granularity && isGranularitySupported(dataSource, parsed.granularity)) {
+          return parsed.granularity;
+        }
+      } catch {
+        // Fall through to default
+      }
+    }
+    return getDefaultGranularity(dataSource);
+  });
+  const [comparisonType, setComparisonType] = useState(() => {
+    const saved = localStorage.getItem('dateRangeFilter');
+    if (saved) {
+      try {
+        const parsed = JSON.parse(saved);
+        return parsed.comparisonType || COMPARISON_TYPE.NONE;
+      } catch {
+        return COMPARISON_TYPE.NONE;
+      }
+    }
+    return COMPARISON_TYPE.NONE;
+  });
+  const [validationError, setValidationError] = useState(null);
+  const dropdownRef = useRef(null);
 
-  // Update granularity when data source changes
+  // Update granularity when data source changes (only if current is unsupported)
   useEffect(() => {
-    if (!isGranularitySupported(dataSource, granularity)) {
+    const isSupported = isGranularitySupported(dataSource, granularity);
+    if (!isSupported) {
+      // This is intentional - we need to sync with data source capabilities
+      // eslint-disable-next-line react-hooks/set-state-in-effect
       setGranularity(getDefaultGranularity(dataSource));
     }
-  }, [dataSource]);
+  }, [dataSource]); // eslint-disable-line react-hooks/exhaustive-deps
 
   // Close dropdown when clicking outside
   useEffect(() => {
@@ -74,6 +95,16 @@ const DateRangeFilter = ({
 
   // Notify parent of changes
   useEffect(() => {
+    const getCurrentDateRange = () => {
+      if (selectedPreset === DATE_PRESETS.CUSTOM) {
+        return {
+          startDate: customStartDate,
+          endDate: customEndDate,
+        };
+      }
+      return getPresetDateRange(selectedPreset);
+    };
+
     const { startDate, endDate } = getCurrentDateRange();
     if (startDate && endDate) {
       const comparisonRange = comparisonType !== COMPARISON_TYPE.NONE
@@ -96,7 +127,7 @@ const DateRangeFilter = ({
         preset: selectedPreset,
       });
     }
-  }, [selectedPreset, customStartDate, customEndDate, granularity, comparisonType]);
+  }, [selectedPreset, customStartDate, customEndDate, granularity, comparisonType, onChange]);
 
   const getCurrentDateRange = () => {
     if (selectedPreset === DATE_PRESETS.CUSTOM) {

@@ -19,11 +19,6 @@ import {
   eachWeekOfInterval,
   eachMonthOfInterval,
   differenceInDays,
-  differenceInWeeks,
-  differenceInMonths,
-  differenceInQuarters,
-  differenceInYears,
-  parseISO,
   isAfter,
   isBefore,
   isValid,
@@ -220,7 +215,7 @@ export const generateDataPoints = (startDate, endDate, granularity) => {
         fullLabel: format(date, 'MMMM yyyy'),
       }));
 
-    case GRANULARITY.QUARTERLY:
+    case GRANULARITY.QUARTERLY: {
       const quarters = [];
       let currentQuarter = startOfQuarter(startDate);
       const lastQuarter = startOfQuarter(endDate);
@@ -237,8 +232,9 @@ export const generateDataPoints = (startDate, endDate, granularity) => {
         currentQuarter = startOfQuarter(subQuarters(currentQuarter, -1));
       }
       return quarters;
+    }
 
-    case GRANULARITY.YEARLY:
+    case GRANULARITY.YEARLY: {
       const years = [];
       let currentYear = startOfYear(startDate);
       const lastYear = startOfYear(endDate);
@@ -255,6 +251,7 @@ export const generateDataPoints = (startDate, endDate, granularity) => {
         currentYear = startOfYear(subYears(currentYear, -1));
       }
       return years;
+    }
 
     default:
       return [];

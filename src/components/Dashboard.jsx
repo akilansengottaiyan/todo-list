@@ -28,71 +28,71 @@ const Dashboard = () => {
   const [activeView, setActiveView] = useState('overview'); // overview, tools, functions
 
   useEffect(() => {
-    if (dateRangeConfig) {
-      updateDashboardData();
-    }
+    if (!dateRangeConfig) return;
+
+    const updateDashboardData = async () => {
+      setLoading(true);
+      
+      // Simulate API delay
+      await new Promise(resolve => setTimeout(resolve, 500));
+
+      const { startDate, endDate, granularity, comparisonType, comparisonRange } = dateRangeConfig;
+
+      // Generate data points
+      const dataPoints = generateDataPoints(startDate, endDate, granularity);
+
+      // Get current period KPIs
+      const currentPeriodKPIs = getKPISummary(startDate, endDate, selectedDataSource, granularity);
+      setCurrentKPIs(currentPeriodKPIs);
+
+      // Get comparison data if enabled
+      if (comparisonType !== COMPARISON_TYPE.NONE && comparisonRange) {
+        const previousPeriodKPIs = getKPISummary(
+          comparisonRange.startDate,
+          comparisonRange.endDate,
+          selectedDataSource,
+          granularity
+        );
+        const comparison = getComparisonKPIs(currentPeriodKPIs, previousPeriodKPIs);
+        setComparisonKPIs(comparison);
+      } else {
+        setComparisonKPIs(null);
+      }
+
+      // Generate chart data
+      const adoptionData = generateAdoptionData(dataPoints, selectedDataSource);
+      const usageData = generateUsageData(dataPoints, selectedDataSource);
+      const valueData = generateValueData(dataPoints, selectedDataSource);
+      const creditData = generateCreditUsageData(dataPoints, selectedDataSource);
+
+      // Combine data for charts
+      const combinedChartData = dataPoints.map((point, index) => ({
+        label: point.label,
+        fullLabel: point.fullLabel,
+        activeUsers: adoptionData[index].activeUsers,
+        newUsers: adoptionData[index].newUsers,
+        interactions: usageData[index].totalInteractions,
+        sessions: usageData[index].sessions,
+        engagement: usageData[index].engagementScore,
+        value: valueData[index].estimatedValue,
+        timeSaved: valueData[index].timeSaved,
+        credits: creditData[index].creditsUsed,
+        cost: creditData[index].creditsCost,
+      }));
+
+      setChartData(combinedChartData);
+
+      // Get tool breakdown for tools view
+      if (selectedDataSource === DATA_SOURCES.ALL_TOOLS) {
+        const breakdown = getToolBreakdown(startDate, endDate, granularity);
+        setToolBreakdown(breakdown);
+      }
+
+      setLoading(false);
+    };
+
+    updateDashboardData();
   }, [dateRangeConfig, selectedDataSource]);
-
-  const updateDashboardData = async () => {
-    setLoading(true);
-    
-    // Simulate API delay
-    await new Promise(resolve => setTimeout(resolve, 500));
-
-    const { startDate, endDate, granularity, comparisonType, comparisonRange } = dateRangeConfig;
-
-    // Generate data points
-    const dataPoints = generateDataPoints(startDate, endDate, granularity);
-
-    // Get current period KPIs
-    const currentPeriodKPIs = getKPISummary(startDate, endDate, selectedDataSource, granularity);
-    setCurrentKPIs(currentPeriodKPIs);
-
-    // Get comparison data if enabled
-    if (comparisonType !== COMPARISON_TYPE.NONE && comparisonRange) {
-      const previousPeriodKPIs = getKPISummary(
-        comparisonRange.startDate,
-        comparisonRange.endDate,
-        selectedDataSource,
-        granularity
-      );
-      const comparison = getComparisonKPIs(currentPeriodKPIs, previousPeriodKPIs);
-      setComparisonKPIs(comparison);
-    } else {
-      setComparisonKPIs(null);
-    }
-
-    // Generate chart data
-    const adoptionData = generateAdoptionData(dataPoints, selectedDataSource);
-    const usageData = generateUsageData(dataPoints, selectedDataSource);
-    const valueData = generateValueData(dataPoints, selectedDataSource);
-    const creditData = generateCreditUsageData(dataPoints, selectedDataSource);
-
-    // Combine data for charts
-    const combinedChartData = dataPoints.map((point, index) => ({
-      label: point.label,
-      fullLabel: point.fullLabel,
-      activeUsers: adoptionData[index].activeUsers,
-      newUsers: adoptionData[index].newUsers,
-      interactions: usageData[index].totalInteractions,
-      sessions: usageData[index].sessions,
-      engagement: usageData[index].engagementScore,
-      value: valueData[index].estimatedValue,
-      timeSaved: valueData[index].timeSaved,
-      credits: creditData[index].creditsUsed,
-      cost: creditData[index].creditsCost,
-    }));
-
-    setChartData(combinedChartData);
-
-    // Get tool breakdown for tools view
-    if (selectedDataSource === DATA_SOURCES.ALL_TOOLS) {
-      const breakdown = getToolBreakdown(startDate, endDate, granularity);
-      setToolBreakdown(breakdown);
-    }
-
-    setLoading(false);
-  };
 
   const handleDateRangeChange = (config) => {
     setDateRangeConfig(config);
