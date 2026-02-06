@@ -11,6 +11,8 @@ function App() {
     return localStorage.getItem("task") || ""
   })
 
+  const [statusFilter, setStatusFilter] = useState("all")
+
   // 2️⃣ Save todos whenever they change
   useEffect(() => {
     localStorage.setItem("todos", JSON.stringify(todos))
@@ -46,6 +48,21 @@ function App() {
     ))
   }
 
+  const getFilteredTodos = () => {
+    return todos
+      .map((todo, index) => ({ ...todo, originalIndex: index }))
+      .filter((todo) => {
+        if (statusFilter === "completed") return todo.completed === true
+        if (statusFilter === "pending") return todo.completed === false
+        return true // "all"
+      })
+      .sort((a, b) => {
+        const dateA = a.createdAt ? new Date(a.createdAt) : new Date(0)
+        const dateB = b.createdAt ? new Date(b.createdAt) : new Date(0)
+        return dateA - dateB
+      })
+  }
+
   return (
     <>
       <div className="custom-container">
@@ -58,15 +75,28 @@ function App() {
             <input value={task} onChange={(e) => setTask(e.target.value)} type="text" className="form-control" aria-describedby="button-addon2"/>
             <button className="btn add-todo btn-outline-secondary" type="button" id="button-addon2" onClick={addTodo}>Add Todo</button>
           </div>
+          <div className="filter-container">
+            <button 
+              className={`filter-btn ${statusFilter === "all" ? "active" : ""}`}
+              onClick={() => setStatusFilter("all")}
+            >
+              All
+            </button>
+            <button 
+              className={`filter-btn ${statusFilter === "pending" ? "active" : ""}`}
+              onClick={() => setStatusFilter("pending")}
+            >
+              Pending
+            </button>
+            <button 
+              className={`filter-btn ${statusFilter === "completed" ? "active" : ""}`}
+              onClick={() => setStatusFilter("completed")}
+            >
+              Completed
+            </button>
+          </div>
           <ul className="list">
-            { todos
-              .map((todo, index) => ({ ...todo, originalIndex: index }))
-              .sort((a, b) => {
-                const dateA = a.createdAt ? new Date(a.createdAt) : new Date(0)
-                const dateB = b.createdAt ? new Date(b.createdAt) : new Date(0)
-                return dateA - dateB
-              })
-              .map((t) => (
+            { getFilteredTodos().map((t) => (
               <li key={t.originalIndex} className="todo-item">
                 <div className="todo-content">
                   <input 

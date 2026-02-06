@@ -93,3 +93,35 @@ ul {
   transition: 0.15s ease;
   cursor: pointer;
 }
+
+.filter-container {
+  display: flex;
+  justify-content: center;
+  gap: 10px;
+  margin: 20px auto;
+  width: 80%;
+}
+
+.filter-btn {
+  flex: 1;
+  padding: 10px 20px;
+  border: 2px solid teal;
+  background-color: white;
+  color: teal;
+  border-radius: 8px;
+  font-weight: 600;
+  cursor: pointer;
+  transition: all 0.2s ease;
+  font-size: 14px;
+}
+
+.filter-btn:hover {
+  transform: scale(1.05);
+  background-color: #e6f7f7;
+}
+
+.filter-btn.active {
+  background-color: teal;
+  color: white;
+  box-shadow: 0 4px 10px rgba(0, 128, 128, 0.3);
+}
