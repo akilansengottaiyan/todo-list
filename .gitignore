@@ -138,5 +138,7 @@ dist
 vite.config.js.timestamp-*
 vite.config.ts.timestamp-*
 
-# Generated task definitions
-task-definitions/
+# Generated task definitions (but keep .gitkeep and EXAMPLE)
+task-definitions/*
+!task-definitions/.gitkeep
+!task-definitions/EXAMPLE-task-definition.md
