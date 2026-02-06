@@ -43,11 +43,3 @@ npm run dev
 
 ---
 
-## 🧠 How It Works
-
-- `todos` and `task` are stored with `useState`
-- Two `useEffect` hooks keep everything synced with localStorage
-- Deleting a todo uses array filtering based on index
-- The UI is centered in a white card with rounded corners and subtle shadowing
-
----
