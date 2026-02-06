@@ -1,4 +1,4 @@
-import { differenceInDays, eachDayOfInterval, format, addDays } from 'date-fns';
+import { eachDayOfInterval, format, addDays } from 'date-fns';
 
 // AI Tools being tracked
 const AI_TOOLS = [
@@ -15,8 +15,6 @@ const AI_TOOLS = [
  * Generate mock data for a given date range
  */
 const generateMockData = (startDate, endDate) => {
-  const days = differenceInDays(endDate, startDate) + 1;
-  
   // Generate daily data for time series
   const dailyData = eachDayOfInterval({ start: startDate, end: endDate }).map(date => {
     const dateStr = format(date, 'yyyy-MM-dd');

@@ -6,7 +6,6 @@ import {
   isValidDateRange,
   getMinAllowedDate,
   getMaxAllowedDate,
-  shouldDisableDate,
   formatDisplayDate
 } from '../utils/dateUtils';
 import './DateRangeFilter.css';
@@ -31,23 +30,28 @@ const DateRangeFilter = ({ onDateRangeChange, initialStartDate, initialEndDate }
 
   // Initialize with default (1M) on first load
   useEffect(() => {
+    let start, end;
+    
     if (initialStartDate && initialEndDate) {
-      const start = new Date(initialStartDate);
-      const end = new Date(initialEndDate);
-      setStartDate(start);
-      setEndDate(end);
-      setCustomStartDate(format(start, 'yyyy-MM-dd'));
-      setCustomEndDate(format(end, 'yyyy-MM-dd'));
+      start = new Date(initialStartDate);
+      end = new Date(initialEndDate);
     } else {
-      const { start, end } = getPresetDates('1M');
-      setStartDate(start);
-      setEndDate(end);
-      setCustomStartDate(format(start, 'yyyy-MM-dd'));
-      setCustomEndDate(format(end, 'yyyy-MM-dd'));
+      const preset = getPresetDates('1M');
+      start = preset.start;
+      end = preset.end;
+      
+      // Only notify parent on first load when there's no initial data
       if (onDateRangeChange) {
         onDateRangeChange(start, end);
       }
     }
+    
+    // Set all state in a single batch
+    setStartDate(start);
+    setEndDate(end);
+    setCustomStartDate(format(start, 'yyyy-MM-dd'));
+    setCustomEndDate(format(end, 'yyyy-MM-dd'));
+    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, []);
 
   const handlePresetClick = (presetId) => {
