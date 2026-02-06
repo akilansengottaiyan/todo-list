@@ -51,15 +51,3 @@ npm run dev
 - The UI is centered in a white card with rounded corners and subtle shadowing
 
 ---
-
-## 📁 File Structure
-
-```
-src/
-  App.jsx
-  App.css
-  main.jsx
-public/
-  index.html
-```
----
